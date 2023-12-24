@@ -20,55 +20,6 @@ resource "aws_subnet" "Private" {
         Name = "Private_Subnet"
     }
 }
-
-resource "aws_internet_gateway" "My_IGW" {
-    vpc_id = aws_vpc.new_vpc
-    tags = {
-        Name = "my-IGW"
-    }
-}
-
-resource "aws_eip" "MyIP" {
-    domain = "vpc"
-}
-
-resource "aws_nat_gateway" "My_Nat" {
-    allocation_id =   aws_eip.MyIP.id
-    subnet_id = aws_subnet.Public.id
-}
-
-resource "aws_route_table" "My-RT1" {
-    vpc_id = aws_vpc.new_vpc
-    route {
-        cidr_block = "0.0.0.0/0"
-        gateway_id = aws_internet_gateway.My_IGW.id
-    }
-    tags = {
-        Name = "My-RT1"
-    }
-}
-
-resource "aws_route_table" "My-RT2" {
-    vpc_id =  aws_vpc.new_vpc
-    route {
-        cidr_block = "0.0.0.0/0"
-        gateway_id  = aws_nat_gateway.My_Nat.id
-    } 
-    tags = {
-        Name = "my-RT2"
-    }
-}
-
-resource "aws_route_table_association" "MY-RTA1" {
-    subnet_id =  aws_subnet.Public.id
-    route_table_id = aws_route_table.My-RT1.id
-}
-
-resource "aws_route_table_association" "My-RTA2" {
-    subnet_id = aws_subnet.Private.id
-    route_table_id = aws_route_table.My-RT2.id
-}
-
 resource "aws_security_group" "my-SG" {
     name = "first-SG"
     description = "Allow TLS inbound traffic"
@@ -104,6 +55,8 @@ resource "aws_instance" "New_Instance" {
     ami = var.ami
     instance_type = var.instance_type
     key_name = var.key_name
+    subnet_id = [aws_subnet.Public.id]
+    vpc_security_group_ids = [aws_security_group.my-SG.id]
     
     tags = {
         Name = "New_instance"
