@@ -6,7 +6,7 @@ resource "aws_vpc" "new_vpc" {
 }
 
 resource "aws_subnet" "Public" {
-    vpc_id = aws_vpc.new_vpc
+    vpc_id = aws_vpc.new_vpc.id
     cidr_block = var.Public_cidr
     tags = {
         Name = "Public_Subnet"
@@ -14,7 +14,7 @@ resource "aws_subnet" "Public" {
 }
 
 resource "aws_subnet" "Private" {
-    vpc_id = aws_vpc.new_vpc
+    vpc_id = aws_vpc.new_vpc.id
     cidr_block = var.Private_cidr
     tags = {
         Name = "Private_Subnet"
