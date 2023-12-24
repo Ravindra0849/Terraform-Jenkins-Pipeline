@@ -55,7 +55,6 @@ resource "aws_instance" "New_Instance" {
     ami = var.ami
     instance_type = var.instance_type
     key_name = var.key_name
-    subnet_id = [aws_subnet.Public.id]
     vpc_security_group_ids = [aws_security_group.my-SG.id]
     
     tags = {
